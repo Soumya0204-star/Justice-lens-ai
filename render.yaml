@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: justice-lens-api
+    runtime: python
+    buildCommand: pip install -r app/requirements.txt
+    startCommand: gunicorn api.main:app --bind 0.0.0.0:10000 -w 2
+    envVars:
+      - key: WATSONX_API_KEY
+        sync: false
+      - key: WATSONX_PROJECT_ID
+        sync: false
+      - key: WATSONX_URL
+        value: https://us-south.ml.cloud.ibm.com
+      - key: WATSONX_MODEL_ID
+        value: ibm/granite-3-8b-instruct
