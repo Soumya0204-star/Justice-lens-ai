@@ -26,6 +26,7 @@ tabulate>=0.9
 # --- API & Orchestration ---
 fastapi>=0.100
 uvicorn>=0.23
+gunicorn>=21.0          # <--- ADD THIS
 
 # --- Optional but recommended for development ---
 pytest>=7.0
