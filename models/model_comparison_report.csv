@@ -1,0 +1,6 @@
+rank,model_name,cv_mean_score,cv_std_score,test_accuracy,test_precision,test_recall,test_f1,test_roc_auc
+1,XGBoost,0.9991,0.0004,0.9888,0.9745,0.9808,0.9776,0.9995
+2,Gradient Boosting,0.9986,0.0006,0.9856,0.9804,0.9615,0.9709,0.9989
+3,Random Forest,0.9964,0.0016,0.9615,0.8882,0.9679,0.9264,0.9966
+4,Logistic Regression,0.9887,0.0027,0.931,0.7989,0.9679,0.8754,0.989
+5,Decision Tree,0.9802,0.0047,0.9791,0.9387,0.9808,0.9592,0.9886
