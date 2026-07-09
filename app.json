@@ -1,0 +1,21 @@
+{
+  "project_name": "JusticeLens AI",
+  "domain": "Government / Public Policy / Legal Access",
+  "description": "AI Decision Support System for analyzing demographic and regional disparities in Tele-Law case registrations across India",
+  "technologies": [
+    "Python",
+    "IBM watsonx.ai",
+    "IBM Granite",
+    "Streamlit",
+    "FastAPI",
+    "XGBoost",
+    "SHAP"
+  ],
+  "deployment": {
+    "frontend": "Streamlit Cloud",
+    "backend": "Render.com",
+    "ai_services": "IBM Cloud"
+  },
+  "github": "https://github.com/Soumya0204-star/Justice-lens-ai",
+  "live_demo": "https://justice-lens-ai-pxby8xqnatrbbsbcr4tnv6.streamlit.app/"
+}
