@@ -1,3 +1,21 @@
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+APP_DIR = Path(__file__).resolve().parent.parent
+for p in [str(PROJECT_ROOT), str(APP_DIR)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+APP_DIR = Path(__file__).resolve().parent.parent
+for p in [str(PROJECT_ROOT), str(APP_DIR)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 """
 6_🏛️_IBM_watsonx_Policy_Room.py
 ==================================
@@ -104,7 +122,8 @@ with tab_summary:
 
     if "policy_room_summary" in st.session_state:
         result = st.session_state["policy_room_summary"]
-        theme.insight_card("Executive Summary", result.narrative_text.replace("\n", "<br/>"), "gold")
+        theme.insight_card("Executive Summary", result.narrative_text.replace("
+", "<br/>"), "gold")
         theme.provenance_tag(result.is_ai_generated, result.model_id)
 
 # --------------------------------------------------------------------------- #
@@ -147,7 +166,8 @@ with tab_policy:
 
     if "policy_room_recommendation" in st.session_state:
         result = st.session_state["policy_room_recommendation"]
-        theme.insight_card(f"Recommendation -- {rec_district}, {rec_state}", result.narrative_text.replace("\n", "<br/>"), "gold")
+        theme.insight_card(f"Recommendation -- {rec_district}, {rec_state}", result.narrative_text.replace("
+", "<br/>"), "gold")
         theme.provenance_tag(result.is_ai_generated, result.model_id)
 
 # --------------------------------------------------------------------------- #

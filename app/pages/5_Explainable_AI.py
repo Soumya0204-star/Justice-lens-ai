@@ -1,3 +1,21 @@
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+APP_DIR = Path(__file__).resolve().parent.parent
+for p in [str(PROJECT_ROOT), str(APP_DIR)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+APP_DIR = Path(__file__).resolve().parent.parent
+for p in [str(PROJECT_ROOT), str(APP_DIR)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 """
 5_🧠_Explainable_AI.py
 ========================
@@ -52,7 +70,9 @@ shap_explainer, shap_error = ds.get_shap_explainer(artifacts)
 if shap_explainer is None:
     st.warning(
         f"SHAP explainability is unavailable in this environment: "
-        f"{shap_error}\n\nInstall the `shap` package "
+        f"{shap_error}
+
+Install the `shap` package "
         "(`pip install shap`, already listed in `requirements.txt`) and "
         "restart the app to enable this page's full functionality. Below "
         "is an approximate feature importance computed directly from the "

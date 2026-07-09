@@ -1,3 +1,21 @@
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+APP_DIR = Path(__file__).resolve().parent.parent
+for p in [str(PROJECT_ROOT), str(APP_DIR)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
+import sys
+from pathlib import Path
+
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+APP_DIR = Path(__file__).resolve().parent.parent
+for p in [str(PROJECT_ROOT), str(APP_DIR)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
+
 """
 1_📊_Executive_Dashboard.py
 ============================
@@ -239,5 +257,6 @@ if generate_clicked:
 
 if "executive_summary_result" in st.session_state:
     result = st.session_state["executive_summary_result"]
-    theme.insight_card("Executive Summary", result.narrative_text.replace("\n", "<br/>"), card_variant="gold")
+    theme.insight_card("Executive Summary", result.narrative_text.replace("
+", "<br/>"), card_variant="gold")
     theme.provenance_tag(result.is_ai_generated, result.model_id)
