@@ -6,58 +6,10 @@ for p in [str(PROJECT_ROOT), str(APP_DIR)]:
     if p not in sys.path:
         sys.path.insert(0, p)
 
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-APP_DIR = Path(__file__).resolve().parent.parent
-for p in [str(PROJECT_ROOT), str(APP_DIR)]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
-
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-APP_DIR = Path(__file__).resolve().parent.parent
-for p in [str(PROJECT_ROOT), str(APP_DIR)]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
-
-"""
-4_🔮_Predictive_Intelligence.py
-=================================
-Predictive Intelligence: an interactive prediction interface for a
-hypothetical district, plus the model comparison leaderboard.
-"""
-
-import sys
-from pathlib import Path
-
-
-def _find_project_root(start: Path) -> Path:
-    for candidate in [start] + list(start.parents):
-        if (candidate / "justicelens").is_dir():
-            return candidate
-    return start
-
-
-_PROJECT_ROOT = _find_project_root(Path(__file__).resolve())
-_APP_DIR = _PROJECT_ROOT / "app"
-for _path in (str(_PROJECT_ROOT), str(_APP_DIR)):
-    # Explicitly ensure both the project root (for "justicelens") and the
-    # app directory (for "common") are importable, rather than relying on
-    # Streamlit's own sys.path handling of the entrypoint script's
-    # directory -- this keeps every page self-sufficient and version
-    # -independent.
-    if _path not in sys.path:
-        sys.path.insert(0, _path)
-
+import streamlit as st
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
-import streamlit as st
-
 from common import data_service as ds
 from common import theme
 from justicelens import config
@@ -68,19 +20,15 @@ theme.render_sidebar_brand()
 
 theme.render_app_header(
     "Predictive Intelligence",
-    subtitle="Score a hypothetical district using the live, best-selected classification model.",
+    subtitle="Score a hypothetical district using the best model.",
     eyebrow="Model & Prediction Interface",
 )
 
 features_df = ds.load_features_dataset()
 artifacts = ds.get_training_artifacts(features_df)
 
-# --------------------------------------------------------------------------- #
-# Model comparison leaderboard
-# --------------------------------------------------------------------------- #
 theme.section_eyebrow("Model Comparison")
 st.markdown("#### Candidate Model Leaderboard")
-
 comparison = artifacts.comparison_table.copy()
 st.dataframe(comparison, use_container_width=True, hide_index=True)
 
@@ -91,29 +39,18 @@ fig_leaderboard = px.bar(
     text=comparison.sort_values(metric_col)[metric_col].map("{:.4f}".format),
 )
 fig_leaderboard.update_traces(marker_color=theme.STEEL_BLUE)
-fig_leaderboard.update_layout(title="Test ROC-AUC by Model", xaxis_title="ROC-AUC", yaxis_title="")
+fig_leaderboard.update_layout(title="Test ROC-AUC", xaxis_title="ROC-AUC", yaxis_title="")
 theme.style_plotly_fig(fig_leaderboard, height=320)
 st.plotly_chart(fig_leaderboard, use_container_width=True)
 
-st.success(
-    f"Selected best model: **{artifacts.best_result.model_name}** "
-    f"(cross-validated ROC-AUC = {artifacts.best_result.cv_mean_score:.4f})"
-)
-
+st.success(f"Best model: **{artifacts.best_result.model_name}** (CV ROC-AUC = {artifacts.best_result.cv_mean_score:.4f})")
 st.markdown("---")
 
-# --------------------------------------------------------------------------- #
-# Prediction interface
-# --------------------------------------------------------------------------- #
 theme.section_eyebrow("Prediction Interface")
 st.markdown("#### Score a Hypothetical District")
-st.caption(
-    "Adjust the sliders below to describe a hypothetical district and see "
-    "the model's predicted legal-access disparity status in real time."
-)
+st.caption("Adjust sliders to describe a hypothetical district and see the prediction.")
 
 feature_stats = features_df[artifacts.feature_names].describe()
-
 input_values = {}
 input_cols = st.columns(2)
 for i, feature in enumerate(artifacts.feature_names):
@@ -122,7 +59,6 @@ for i, feature in enumerate(artifacts.feature_names):
     feature_max = float(feature_stats.loc["max", feature])
     feature_mean = float(feature_stats.loc["50%", feature])
     label = feature.replace("_", " ").title()
-
     with col:
         if feature_max - feature_min > 1000:
             input_values[feature] = st.number_input(
@@ -135,46 +71,39 @@ for i, feature in enumerate(artifacts.feature_names):
                 value=round(feature_mean, 2), key=f"input_{feature}",
             )
 
-predict_clicked = st.button("Run Prediction", type="primary")
-
-if predict_clicked:
+if st.button("Run Prediction", type="primary"):
     input_df = pd.DataFrame([input_values])[artifacts.feature_names]
     best_pipeline = artifacts.best_result.pipeline
-    predicted_probability = float(best_pipeline.predict_proba(input_df)[0, 1])
-    predicted_class_index = int(best_pipeline.predict(input_df)[0])
-    predicted_class = config.ML_CLASS_NAMES[predicted_class_index]
+    prob = float(best_pipeline.predict_proba(input_df)[0, 1])
+    cls_idx = int(best_pipeline.predict(input_df)[0])
+    cls_name = config.ML_CLASS_NAMES[cls_idx]
 
     result_cols = st.columns([1, 2])
     with result_cols[0]:
-        fig_gauge = go.Figure(
-            go.Indicator(
-                mode="gauge+number",
-                value=predicted_probability * 100,
-                number={"suffix": "%"},
-                title={"text": "Underserved Probability"},
-                gauge={
-                    "axis": {"range": [0, 100]},
-                    "bar": {"color": theme.OXBLOOD if predicted_class == "Underserved" else theme.VERDICT_TEAL},
-                    "steps": [
-                        {"range": [0, 25], "color": "#E4F0EC"},
-                        {"range": [25, 50], "color": "#F4EDD8"},
-                        {"range": [50, 75], "color": "#F3DCC9"},
-                        {"range": [75, 100], "color": "#F0D3D3"},
-                    ],
-                },
-            )
-        )
+        fig_gauge = go.Figure(go.Indicator(
+            mode="gauge+number",
+            value=prob * 100,
+            number={"suffix": "%"},
+            title={"text": "Underserved Probability"},
+            gauge={
+                "axis": {"range": [0, 100]},
+                "bar": {"color": theme.OXBLOOD if cls_name == "Underserved" else theme.VERDICT_TEAL},
+                "steps": [
+                    {"range": [0, 25], "color": "#E4F0EC"},
+                    {"range": [25, 50], "color": "#F4EDD8"},
+                    {"range": [50, 75], "color": "#F3DCC9"},
+                    {"range": [75, 100], "color": "#F0D3D3"},
+                ],
+            },
+        ))
         theme.style_plotly_fig(fig_gauge, height=320)
         st.plotly_chart(fig_gauge, use_container_width=True)
-
     with result_cols[1]:
-        st.markdown(theme.tier_badge_html(predicted_class), unsafe_allow_html=True)
+        st.markdown(theme.tier_badge_html(cls_name), unsafe_allow_html=True)
         theme.insight_card(
             "Prediction Result",
-            f"This hypothetical district is predicted as <b>{predicted_class}</b> "
-            f"with a {predicted_probability:.1%} estimated probability of being "
-            f"underserved, using the <b>{artifacts.best_result.model_name}</b> model.",
-            card_variant="oxblood" if predicted_class == "Underserved" else "teal",
+            f"This hypothetical district is predicted as **{cls_name}** with a {prob:.1%} probability.",
+            card_variant="oxblood" if cls_name == "Underserved" else "teal",
         )
 
     shap_explainer, shap_error = ds.get_shap_explainer(artifacts)
@@ -192,7 +121,7 @@ if predict_clicked:
                         variant,
                         note=item["direction"],
                     )
-        except Exception as exc:  # noqa: BLE001 -- purely a display best-effort for a custom input
-            st.caption(f"SHAP explanation unavailable for this input: {exc}")
+        except Exception as e:
+            st.caption(f"SHAP unavailable: {e}")
     else:
-        st.caption(f"SHAP explainability unavailable in this environment ({shap_error}).")
+        st.caption(f"SHAP unavailable ({shap_error}).")
