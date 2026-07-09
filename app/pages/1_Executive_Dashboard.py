@@ -1,29 +1,3 @@
-import sys
-from pathlib import Path
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-APP_DIR = Path(__file__).resolve().parent.parent
-for p in [str(PROJECT_ROOT), str(APP_DIR)]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
-
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-APP_DIR = Path(__file__).resolve().parent.parent
-for p in [str(PROJECT_ROOT), str(APP_DIR)]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
-
-import sys
-from pathlib import Path
-
-PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
-APP_DIR = Path(__file__).resolve().parent.parent
-for p in [str(PROJECT_ROOT), str(APP_DIR)]:
-    if p not in sys.path:
-        sys.path.insert(0, p)
-
 """
 1_📊_Executive_Dashboard.py
 ============================
@@ -34,24 +8,12 @@ an on-demand IBM Granite-narrated executive summary.
 import sys
 from pathlib import Path
 
-
-def _find_project_root(start: Path) -> Path:
-    for candidate in [start] + list(start.parents):
-        if (candidate / "justicelens").is_dir():
-            return candidate
-    return start
-
-
-_PROJECT_ROOT = _find_project_root(Path(__file__).resolve())
-_APP_DIR = _PROJECT_ROOT / "app"
-for _path in (str(_PROJECT_ROOT), str(_APP_DIR)):
-    # Explicitly ensure both the project root (for "justicelens") and the
-    # app directory (for "common") are importable, rather than relying on
-    # Streamlit's own sys.path handling of the entrypoint script's
-    # directory -- this keeps every page self-sufficient and version
-    # -independent.
-    if _path not in sys.path:
-        sys.path.insert(0, _path)
+# --- Path fix ---
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+APP_DIR = Path(__file__).resolve().parent.parent
+for p in [str(PROJECT_ROOT), str(APP_DIR)]:
+    if p not in sys.path:
+        sys.path.insert(0, p)
 
 import pandas as pd
 import plotly.express as px
@@ -265,6 +227,6 @@ if generate_clicked:
 
 if "executive_summary_result" in st.session_state:
     result = st.session_state["executive_summary_result"]
-    theme.insight_card("Executive Summary", result.narrative_text.replace("
-", "<br/>"), card_variant="gold")
+    # Fixed line: properly closed string
+    theme.insight_card("Executive Summary", result.narrative_text.replace("\n", "<br/>"), card_variant="gold")
     theme.provenance_tag(result.is_ai_generated, result.model_id)
