@@ -1,0 +1,12 @@
+Problem Statement 37
+
+'Analyzing Demographic and Regional Disparities in Tele-Law Case Registrations for Inclusive Legal Access'
+
+Tele-Law is a Government of India initiative that provides free legal advice to citizens through Common Service Centres (CSCs) across the country. Despite its expansion, case registration volumes vary significantly across districts, states, and demographic groups.
+
+The challenge is to:
+1. Analyze district-wise Tele-Law case registration data (FY 2021-22 to 2024-25)
+2. Identify underserved districts using machine learning
+3. Explain why districts are underserved using SHAP explainability
+4. Generate policy recommendations using IBM Granite (watsonx.ai)
+5. Provide an interactive dashboard for policymakers
